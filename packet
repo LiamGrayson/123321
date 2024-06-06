@@ -13,3 +13,7 @@ def start(ctx):
 addons = [
     start,
 ]
+
+
+
+mitmproxy --addon-script send_packet send_packet.py
