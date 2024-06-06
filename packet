@@ -17,3 +17,31 @@ addons = [
 
 
 mitmproxy --addon-script send_packet send_packet.py
+
+import csv
+import random
+
+def random_data(file_path):
+    """
+    从 CSV 文件中随机选取一个数据。
+
+    Args:
+        file_path (str): CSV 文件路径。
+
+    Returns:
+        list: 随机选取的数据。
+    """
+    with open(file_path, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        data = list(reader)
+        return random.choice(data)
+
+if __name__ == '__main__':
+    # 设置 CSV 文件路径
+    file_path = 'data.csv'
+
+    # 从文件中随机选取一个数据
+    random_data = random_data(file_path)
+
+    # 打印随机选取的数据
+    print(random_data)
