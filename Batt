@@ -1,0 +1,39 @@
+@echo off
+
+rem 确保已安装 mitmproxy
+set MITMPROXY_PATH="C:\Program Files\Mitmproxy\mitmproxy.exe"
+
+rem 设置目标服务器
+set TARGET_HOST="192.168.8.109"
+set TARGET_PORT="80"
+
+rem 设置要发送的数据包
+set REQUEST_DATA="GET /1/2&dd=123&mm=456 HTTP/1.1\r\nContent-length: 2\r\n\r\n"
+
+rem 启动 mitmproxy 并设置代理
+start "" "%MITMPROXY_PATH%" --host "%TARGET_HOST%" --port "%TARGET_PORT%"
+
+rem 等待 mitmproxy 启动
+ping -n 1 localhost >nul
+
+rem 发送数据包
+echo "%REQUEST_DATA%" | mitmproxy --raw "replay @localhost:%TARGET_PORT%"
+
+rem 获取服务器响应
+set RESPONSE_DATA=
+
+for /F "delims=" %%a in ('mitmproxy --raw "replay @localhost:%TARGET_PORT%"') do (
+  set RESPONSE_DATA=!RESPONSE_DATA%%a!
+)
+
+rem 显示服务器响应
+echo 服务器响应：
+echo !RESPONSE_DATA!
+
+rem 停止 mitmproxy
+taskkill /F /IM mitmproxy.exe
+
+rem 恢复原始代理设置
+netsh interface ip address set address name="Local Area Connection" dhcp
+
+echo 数据包发送成功
