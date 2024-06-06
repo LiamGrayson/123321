@@ -37,3 +37,33 @@ rem 恢复原始代理设置
 netsh interface ip address set address name="Local Area Connection" dhcp
 
 echo 数据包发送成功
+
+
+
+@echo off
+
+setlocal EnableDelayedExpansion
+
+rem 设置CSV文件路径
+set csvFilePath="C:\Users\Public\Documents\data.csv"
+
+rem 统计CSV文件行数
+set lineCount=0
+for /F "delims=" %%a in ('type "%csvFilePath%"') do (
+    set /a lineCount+=1
+)
+
+rem 随机生成行号
+set randomLineNum=0
+set /a randomLineNum=%%random%%lineCount+1
+
+rem 读取随机行数据
+set randomData=
+for /F "delims=" %%a in ('fskip=%randomLineNum% "%csvFilePath%"') do (
+    set randomData=%%a
+)
+
+rem 输出随机数据
+echo 随机选取的数据为：!randomData!
+
+pause
