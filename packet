@@ -1,0 +1,15 @@
+import mitmproxy
+import socket
+
+def start(ctx):
+    # 构造数据包
+    packet = b'您的构造的数据包'
+    
+    # 发送数据包
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect(("example.com", 80))
+        s.sendall(packet)
+
+addons = [
+    start,
+]
