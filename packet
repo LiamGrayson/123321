@@ -2,12 +2,13 @@ import mitmproxy
 import socket
 
 def start(ctx):
-    # 构造数据包
-    packet = b'您的构造的数据包'
-    
-    # 发送数据包
+    # Construct data packet
+    request_packet = "GET /1/2&dd=123&mm=456 HTTP/1.1\nContent-length: 2\n\n"  # Replace with your actual request packet
+    packet = request_packet.encode('utf-8')  # Encode request packet to bytes
+
+    # Send data packet
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(("example.com", 80))
+        s.connect(("www.example.com", 80))  # Replace with the target URL
         s.sendall(packet)
 
 addons = [
