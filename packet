@@ -19,22 +19,36 @@ addons = [
 mitmproxy --addon-script send_packet send_packet.py
 
 
-import csv
-import random
+import mitmproxy
+import socket
 
-def random_data(filename):
-  """
-  从csv文件中随机选取一行数据
-  """
-  with open(filename, 'r') as f:
-    reader = csv.reader(f)
-    # 跳过第一行标题行
-    next(reader)
-    # 随机选择一行数据
-    random_row = random.choice(list(reader))
-  return random_row
+def start(ctx):
+    # Construct data packet
+    target_url = "www.example.com"  # Replace with the actual target URL
+    request_method = "GET"  # Replace with the desired HTTP method (GET, POST, etc.)
+    request_headers = {
+        "Host": target_url,
+        "User-Agent": "My Custom User Agent",
+        "Accept": "*/*",
+    }
+    request_body = b"This is the request body."  # Optional for GET requests
 
-# 使用示例
-filename = 'data.csv'  # 替换为您的实际文件名
-random_row = random_data(filename)
-print(random_row)
+    # Create HTTP request packet
+    request = mitmproxy.http.Request(
+        method=request_method,
+        url=target_url,
+        headers=request_headers,
+        content=request_body,
+    )
+
+    # Serialize request to bytes
+    packet = request.raw
+
+    # Send data packet
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((target_url, 80))
+        s.sendall(packet)
+
+addons = [
+    start,
+]
